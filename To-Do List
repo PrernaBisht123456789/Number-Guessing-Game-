@@ -1,0 +1,107 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+class Task {
+public:
+    std::string description;
+    bool isCompleted;
+
+    Task(const std::string& desc) : description(desc), isCompleted(false) {}
+};
+
+class TaskManager {
+private:
+    std::vector<Task> tasks;
+
+public:
+    void addTask(const std::string& description) {
+        tasks.emplace_back(description);
+    }
+
+    void viewTasks() const {
+        if (tasks.empty()) {
+            std::cout << "No tasks available.\n";
+            return;
+        }
+
+        for (size_t i = 0; i < tasks.size(); ++i) {
+            std::cout << i + 1 << ". " << (tasks[i].isCompleted ? "[Completed] " : "[Pending] ") << tasks[i].description << '\n';
+        }
+    }
+
+    void markTaskAsCompleted(size_t index) {
+        if (index < 1 || index > tasks.size()) {
+            std::cout << "Invalid task number.\n";
+            return;
+        }
+
+        tasks[index - 1].isCompleted = true;
+    }
+
+    void removeTask(size_t index) {
+        if (index < 1 || index > tasks.size()) {
+            std::cout << "Invalid task number.\n";
+            return;
+        }
+
+        tasks.erase(tasks.begin() + index - 1);
+    }
+};
+
+void displayMenu() {
+    std::cout << "\nTo-Do List Manager\n";
+    std::cout << "1. Add Task\n";
+    std::cout << "2. View Tasks\n";
+    std::cout << "3. Mark Task as Completed\n";
+    std::cout << "4. Remove Task\n";
+    std::cout << "5. Exit\n";
+    std::cout << "Choose an option: ";
+}
+
+int main() {
+    TaskManager taskManager;
+    int choice;
+
+    while (true) {
+        displayMenu();
+        std::cin >> choice;
+        std::cin.ignore(); // to ignore the newline character after the choice input
+
+        if (choice == 5) {
+            break;
+        }
+
+        switch (choice) {
+            case 1: {
+                std::cout << "Enter task description: ";
+                std::string description;
+                std::getline(std::cin, description);
+                taskManager.addTask(description);
+                break;
+            }
+            case 2:
+                taskManager.viewTasks();
+                break;
+            case 3: {
+                std::cout << "Enter task number to mark as completed: ";
+                size_t taskNumber;
+                std::cin >> taskNumber;
+                taskManager.markTaskAsCompleted(taskNumber);
+                break;
+            }
+            case 4: {
+                std::cout << "Enter task number to remove: ";
+                size_t taskNumber;
+                std::cin >> taskNumber;
+                taskManager.removeTask(taskNumber);
+                break;
+            }
+            default:
+                std::cout << "Invalid option. Please try again.\n";
+                break;
+        }
+    }
+
+    return 0;
+}
